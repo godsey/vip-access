@@ -8,7 +8,7 @@
 PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:$HOME/bin
 export aes_key=D0D0D0E0D0D0DFDFDF2C34323937D7AE
 export keychain="/Users/$USER/Library/Keychains/VIPAccess.keychain"
-export serial=$( ioreg -rac IOPlatformExpertDevice | xpath 'plist/array/dict/key[.="IOPlatformSerialNumber"]/following-sibling::*[position()=1]/text()' 2>/dev/null )
+export serial=$( ioreg -c IOPlatformExpertDevice -d 2 2>/dev/null | grep \"IOPlatformSerialNumber\" | sed 's/"$//; s/.*"//;' )
 security unlock-keychain -p "${serial}SymantecVIPAccess${USER}" $keychain
 export sarray=( $( security find-generic-password -gl CredentialStore $keychain 2>&1 | egrep 'acct"<blob|password:' | sed 's/ //g;'| sort | sed 's/"$//; s/.*"//;' | paste - - ) )
 export id_crypt=${sarray[0]}
